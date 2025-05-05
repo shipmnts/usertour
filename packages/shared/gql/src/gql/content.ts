@@ -6,6 +6,7 @@ export const getContent = gql`
       id
       name
       buildUrl
+      config
       environmentId
       editedVersionId
       publishedVersionId
@@ -169,13 +170,24 @@ export const updateContent = gql`
       name
       buildUrl
       environmentId
+      config
     }
   }
 `;
 
 export const duplicateContent = gql`
-  mutation duplicateContent($contentId: String!, $name: String!) {
-    duplicateContent(data: { contentId: $contentId, name: $name }) {
+  mutation duplicateContent(
+    $contentId: String!
+    $name: String!
+    $targetEnvironmentId: String
+  ) {
+    duplicateContent(
+      data: {
+        contentId: $contentId
+        name: $name
+        targetEnvironmentId: $targetEnvironmentId
+      }
+    ) {
       id
       name
     }

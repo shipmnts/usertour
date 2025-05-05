@@ -52,8 +52,11 @@ export interface Config {
     };
   };
   auth: {
-    cookieDomain: string;
     redirectUrl: string;
+    cookie: {
+      secure: boolean;
+      domain: string;
+    };
     email: {
       enabled: boolean;
       sender: string;
@@ -76,5 +79,23 @@ export interface Config {
       clientSecret: string;
       callbackUrl: string;
     };
+  };
+  stripe: {
+    apiKey: string;
+    webhookSecret: {
+      account: string;
+      accountTest: string;
+    };
+    sessionSuccessUrl: string;
+    sessionCancelUrl: string;
+    portalReturnUrl: string;
+  };
+  content: {
+    limit: {
+      survey: number;
+    };
+  };
+  globalConfig: {
+    enabledBillingUsers: string[];
   };
 }

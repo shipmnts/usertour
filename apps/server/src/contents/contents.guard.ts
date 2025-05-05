@@ -43,9 +43,6 @@ export class ContentsGuard implements CanActivate {
 
     const user = req.user;
     const roles = this.reflector.get<RolesScopeEnum>(Roles, context.getHandler());
-    if (!roles) {
-      return true;
-    }
     if (contentId) {
       const content = await this.contentsService.getContent(contentId);
       if (content) {
@@ -80,6 +77,14 @@ export class ContentsGuard implements CanActivate {
     const environment = await this.environmentsService.get(environmentId);
     if (!environment) {
       throw new NoPermissionError();
+    }
+
+    // Check if the target environment is in the same project
+    if (args.data?.targetEnvironmentId) {
+      const targetEnvironment = await this.environmentsService.get(args.data.targetEnvironmentId);
+      if (!targetEnvironment || environment.projectId !== targetEnvironment.projectId) {
+        throw new NoPermissionError();
+      }
     }
     const projectId = environment.projectId;
 

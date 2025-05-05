@@ -50,10 +50,15 @@ export class ContentsResolver {
   @Mutation(() => Content)
   @Roles([RolesScopeEnum.ADMIN, RolesScopeEnum.OWNER])
   async duplicateContent(@Args('data') data: ContentDuplicateInput) {
-    return await this.contentsService.duplicateContent(data.contentId, data.name);
+    return await this.contentsService.duplicateContent(
+      data.contentId,
+      data.name,
+      data.targetEnvironmentId,
+    );
   }
 
   @Query(() => Content)
+  @Roles([RolesScopeEnum.ADMIN, RolesScopeEnum.OWNER, RolesScopeEnum.VIEWER])
   async getContent(@Args() { contentId }: ContentIdArgs) {
     return await this.contentsService.getContentById(contentId);
   }
@@ -65,6 +70,7 @@ export class ContentsResolver {
   }
 
   @Query(() => Version)
+  @Roles([RolesScopeEnum.ADMIN, RolesScopeEnum.OWNER, RolesScopeEnum.VIEWER])
   async getContentVersion(@Args() { versionId }: VersionIdArgs) {
     return await this.contentsService.getContentVersionById(versionId);
   }
@@ -102,6 +108,7 @@ export class ContentsResolver {
   }
 
   @Query(() => [Version])
+  @Roles([RolesScopeEnum.ADMIN, RolesScopeEnum.OWNER, RolesScopeEnum.VIEWER])
   async listContentVersions(@Args() { contentId }: ContentIdArgs) {
     return await this.contentsService.listContentVersions(contentId);
   }
@@ -127,6 +134,7 @@ export class ContentsResolver {
   }
 
   @Query(() => [VersionOnLocalization])
+  @Roles([RolesScopeEnum.ADMIN, RolesScopeEnum.OWNER, RolesScopeEnum.VIEWER])
   async findManyVersionLocations(@Args() { versionId }: VersionIdArgs) {
     return await this.contentsService.findManyVersionLocations(versionId);
   }
@@ -148,6 +156,7 @@ export class ContentsResolver {
   // }
 
   @Query(() => ContentConnection)
+  @Roles([RolesScopeEnum.ADMIN, RolesScopeEnum.OWNER, RolesScopeEnum.VIEWER])
   async queryContents(
     @Args() { after, before, first, last }: PaginationArgs,
     @Args({ name: 'query', type: () => ContentQuery, nullable: true })
@@ -167,7 +176,7 @@ export class ContentsResolver {
       conditions.name = { contains: conditions.name };
     }
     try {
-      const a = await findManyCursorConnection(
+      return await findManyCursorConnection(
         (args) =>
           this.prisma.content.findMany({
             // include: { steps: { select: { id: true } } },
@@ -185,8 +194,6 @@ export class ContentsResolver {
           }),
         { first, last, before, after },
       );
-      console.log(a);
-      return a;
     } catch (error) {
       console.log(error);
     }
