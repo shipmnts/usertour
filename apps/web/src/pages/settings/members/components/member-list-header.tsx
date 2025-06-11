@@ -26,9 +26,9 @@ export const MemberListHeader = () => {
           Add Team Member
         </Button>
       </div>
-      <MemberInviteDialog isOpen={open} onClose={handleOnClose} />
-    </>
+      <MemberInviteDialog isOpen={isDialogOpen} onClose={handleOnClose} />
+    </div>
   );
 };
 
-MemberListHeader.displayName = "MemberListHeader";
+MemberListHeader.displayName = 'MemberListHeader';
