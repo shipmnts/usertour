@@ -1,4 +1,3 @@
-import { useAppContext } from '@/contexts/app-context';
 import { useMutation } from '@apollo/client';
 import { createContentVersion } from '@usertour-ui/gql/src/gql/content';
 import { Content } from '@usertour-ui/types';
@@ -9,7 +8,6 @@ export const useContentBuilder = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [createVersion] = useMutation(createContentVersion);
-  const { environment } = useAppContext();
 
   const openBuilder = async (content: Content, contentType: string) => {
     let versionId = content?.editedVersionId;
@@ -43,7 +41,7 @@ export const useContentBuilder = () => {
       }
     }
 
-    navigate(`/env/${environment?.id}/${contentType}/${content?.id}/builder/${versionId}`);
+    navigate(`/env/${content?.environmentId}/${contentType}/${content?.id}/builder/${versionId}`);
     return true;
   };
 

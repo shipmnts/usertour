@@ -186,10 +186,7 @@ export const createFilterItem = (condition: any, attributes: Attribute[]) => {
   }
   if (attr.dataType === BizAttributeTypes.DateTime) {
     const iosNow = new Date().toISOString();
-    let iosValue: string | undefined;
-    if (value && !Number.isNaN(new Date(value).getTime())) {
-      iosValue = new Date(value).toISOString();
-    }
+    const iosValue = new Date(value).toISOString();
     switch (logic) {
       case 'lessThan':
         return { data: { path: [attr.codeName], gte: subDays(iosNow, value) } };
@@ -206,10 +203,8 @@ export const createFilterItem = (condition: any, attributes: Attribute[]) => {
       case 'moreThan':
         return { data: { path: [attr.codeName], lte: subDays(iosNow, value) } };
       case 'before':
-        if (!iosValue) return false;
         return { data: { path: [attr.codeName], lte: iosValue } };
       case 'on':
-        if (!iosValue) return false;
         return {
           data: {
             path: [attr.codeName],
@@ -218,7 +213,6 @@ export const createFilterItem = (condition: any, attributes: Attribute[]) => {
           },
         };
       case 'after':
-        if (!iosValue) return false;
         return { data: { path: [attr.codeName], gte: iosValue } };
       case 'empty':
         return {

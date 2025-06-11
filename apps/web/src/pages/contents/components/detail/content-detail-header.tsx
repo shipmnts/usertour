@@ -12,8 +12,6 @@ import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'reac
 import { ContentEditDropdownMenu } from '../shared/content-edit-dropmenu';
 import { ContentPublishForm } from '../shared/content-publish-form';
 import { ContentRenameForm } from '../shared/content-rename-form';
-import { useEnvironmentListContext } from '@/contexts/environment-list-context';
-import { isPublishedInAllEnvironments } from '@usertour-ui/shared-utils';
 
 const navigations = [
   {
@@ -69,11 +67,11 @@ export const ContentDetailHeader = () => {
   const { version, isSaveing } = useContentVersionContext();
   const { environment, isViewOnly } = useAppContext();
   const { openBuilder } = useContentBuilder();
-  const { environmentList } = useEnvironmentListContext();
   const [_, setSearchParams] = useSearchParams();
   if (!contentType || !content) return null;
 
-  const isDisabled = isPublishedInAllEnvironments(content, environmentList, version);
+  const isDisabled =
+    (content.published && content.editedVersionId === content.publishedVersionId) || false;
 
   const handleBack = () => {
     navigator(`/env/${environment?.id}/${contentType}`);

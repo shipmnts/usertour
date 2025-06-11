@@ -158,7 +158,6 @@ export const ContentEditorStarRating = (props: ContentEditorStarRatingProps) => 
                     type="number"
                     value={localData.lowRange}
                     placeholder="Default"
-                    disabled
                     onChange={(e) => handleDataChange({ lowRange: Number(e.target.value) })}
                   />
                   <p>-</p>

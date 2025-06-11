@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@usertour-ui/dropdown-menu';
-import { Delete2Icon, EditIcon } from '@usertour-ui/icons';
+import { CloseIcon, EditIcon } from '@usertour-ui/icons';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@usertour-ui/tooltip';
 import { useState } from 'react';
 import { EventDeleteForm } from './event-delete-form';
@@ -78,11 +78,8 @@ export const EventListAction = (props: EventListActionProps) => {
             Edit event
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={handleDeleteOpen}
-            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-          >
-            <Delete2Icon className="w-6" width={16} height={16} />
+          <DropdownMenuItem onClick={handleDeleteOpen}>
+            <CloseIcon className="w-6" width={16} height={16} />
             Delete event
           </DropdownMenuItem>
         </DropdownMenuContent>

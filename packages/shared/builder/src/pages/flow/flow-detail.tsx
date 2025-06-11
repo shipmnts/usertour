@@ -39,11 +39,12 @@ import {
   hasMissingRequiredData,
 } from '@usertour-ui/shared-editor';
 import { defaultStep, getErrorMessage } from '@usertour-ui/shared-utils';
-import { PlusIcon, SpinnerIcon } from '@usertour-ui/icons';
+import { SpinnerIcon } from '@usertour-ui/icons';
 import { useMutation } from '@apollo/client';
 import { addContentStep, updateContentStep } from '@usertour-ui/gql';
 import { useToast } from '@usertour-ui/use-toast';
 import { ContentType } from '../../components/content-type';
+import { ExtensionElementListener, WebElementListener } from '../../components/element-listener';
 import { FlowPlacement } from './components/flow-placement';
 
 const FlowBuilderDetailHeader = () => {
@@ -321,6 +322,7 @@ const FlowBuilderDetailEmbed = () => {
     currentStep,
     updateCurrentStep,
     currentVersion,
+    isWebBuilder,
     contentRef,
     currentIndex,
     createStep,
@@ -332,7 +334,8 @@ const FlowBuilderDetailEmbed = () => {
   const { contents } = useContentListContext();
   const { attributeList } = useAttributeListContext();
   const [theme, setTheme] = useState<Theme>();
-  const triggerRef = useRef<SVGSVGElement>(null);
+  const triggerRef = useRef<any>();
+  const [isMounted, setIsMounted] = useState<boolean>(false);
   const createNewStep = (currentVersion: ContentVersion, sequence: number) => {
     const step: Step = {
       ...defaultStep,
@@ -365,8 +368,9 @@ const FlowBuilderDetailEmbed = () => {
     updateCurrentStep((pre) => ({ ...pre, data: value }));
   };
 
-  const centerClasses =
-    'w-auto h-6 left-[50%] top-[50%] z-50 grid translate-x-[-50%] translate-y-[-50%]';
+  const handleOnMounted = () => {
+    setIsMounted(true);
+  };
 
   useEffect(() => {
     if (selectorOutput) {
@@ -391,22 +395,31 @@ const FlowBuilderDetailEmbed = () => {
   if (currentStep.type === 'tooltip') {
     return (
       <>
-        <PlusIcon width={24} height={24} ref={triggerRef} className={cn('fixed', centerClasses)} />
-        <ContentPopper
-          ref={contentRef as Ref<HTMLDivElement> | undefined}
-          theme={theme}
-          currentIndex={currentIndex}
-          attributeList={attributeList}
-          currentContent={currentContent}
-          contents={contents}
-          triggerRef={triggerRef}
-          zIndex={zIndex}
-          projectId={projectId}
-          currentStep={currentStep}
-          currentVersion={currentVersion}
-          onChange={handleContentChange}
-          createStep={createNewStep}
-        />
+        {isWebBuilder && <WebElementListener ref={triggerRef} onMounted={handleOnMounted} />}
+        {!isWebBuilder && (
+          <ExtensionElementListener
+            ref={triggerRef}
+            selectorTarget={currentStep.target}
+            onMounted={handleOnMounted}
+          />
+        )}
+        {isMounted && (
+          <ContentPopper
+            ref={contentRef as Ref<HTMLDivElement> | undefined}
+            theme={theme}
+            currentIndex={currentIndex}
+            attributeList={attributeList}
+            currentContent={currentContent}
+            contents={contents}
+            triggerRef={triggerRef}
+            zIndex={zIndex}
+            projectId={projectId}
+            currentStep={currentStep}
+            currentVersion={currentVersion}
+            onChange={handleContentChange}
+            createStep={createNewStep}
+          />
+        )}
       </>
     );
   }

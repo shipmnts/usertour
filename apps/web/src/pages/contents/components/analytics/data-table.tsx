@@ -81,8 +81,8 @@ export const BizSessionsDataTable = () => {
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  key={row.id || `row-${Math.random()}`}
-                  className="h-10"
+                  key={row.id}
+                  className=" h-10"
                   onClick={() => {
                     // editHandler(
                     //   row.getValue("environmentId"),
@@ -92,11 +92,11 @@ export const BizSessionsDataTable = () => {
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id || `cell-${Math.random()}`}>
+                    <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
-                  <TableCell key={`action-${row.id || Math.random()}`}>
+                  <TableCell>
                     <SessionActionDropdownMenu
                       session={row.original}
                       onDeleteSuccess={() => {
@@ -117,7 +117,7 @@ export const BizSessionsDataTable = () => {
                 </TableRow>
               ))
             ) : (
-              <TableRow key="no-results">
+              <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>

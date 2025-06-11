@@ -1,15 +1,11 @@
 import * as SharedPopper from '@usertour-ui/sdk';
 import { ContentEditorClickableElement, ContentEditorSerialize } from '@usertour-ui/shared-editor';
 import { Align, RulesCondition, Side, StepContentType } from '@usertour-ui/types';
-import { useEffect, useRef, useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
+import { useRef } from 'react';
 import { Tour as TourCore } from '../core/tour';
 import { TourStore } from '../types/store';
 import { off, on } from '../utils/listener';
-
-// Types
-type TourProps = {
-  tour: TourCore;
-};
 
 type TourSharedProps = {
   store: TourStore;
@@ -18,10 +14,11 @@ type TourSharedProps = {
   handleActions: (actions: RulesCondition[]) => Promise<void>;
 };
 
-type PopperContentProps = Omit<TourSharedProps, 'handleActions'>;
-
-// Components
-const PopperContent = ({ store, onClose, handleOnClick }: PopperContentProps) => {
+const PopperContent = ({
+  store,
+  onClose,
+  handleOnClick,
+}: Omit<TourSharedProps, 'handleActions'>) => {
   const { currentStep, userInfo, progress } = store;
 
   if (!currentStep) return null;
@@ -42,42 +39,22 @@ const PopperContent = ({ store, onClose, handleOnClick }: PopperContentProps) =>
   );
 };
 
-// Hooks
-const useTargetActions = (
-  ref: React.RefObject<HTMLElement>,
-  currentStep: TourStore['currentStep'],
-  handleActions: TourSharedProps['handleActions'],
-) => {
-  useEffect(() => {
-    if (!ref.current || !currentStep?.target?.actions) return;
-
-    const actions = currentStep.target.actions as RulesCondition[];
-    const handler = () => handleActions(actions);
-
-    on(ref.current, 'click', handler);
-    return () => off(ref.current, 'click', handler);
-  }, [ref.current, currentStep?.target?.actions, handleActions]);
-};
-
-// Components
 const TourPopper = ({ store, ...props }: TourSharedProps) => {
   const { openState, zIndex, globalStyle, currentStep, theme, triggerRef, assets } = store;
   const ref = useRef(triggerRef);
   const themeSetting = theme?.settings;
 
-  useTargetActions(ref, currentStep, props.handleActions);
+  useEffect(() => {
+    if (!ref.current || !currentStep?.target?.actions) return;
+
+    const actions = currentStep.target.actions as RulesCondition[];
+    const handler = () => props.handleActions(actions);
+
+    on(ref.current, 'click', handler);
+    return () => off(ref.current, 'click', handler);
+  }, [ref.current, currentStep?.target?.actions, props.handleActions]);
 
   if (!currentStep) return null;
-
-  const side =
-    currentStep?.setting?.alignType === 'auto'
-      ? 'bottom'
-      : ((currentStep?.setting?.side as Side) ?? 'bottom');
-
-  const align =
-    currentStep?.setting?.alignType === 'auto'
-      ? 'center'
-      : ((currentStep?.setting?.align as Align) ?? 'center');
 
   return (
     <SharedPopper.Popper
@@ -95,8 +72,16 @@ const TourPopper = ({ store, ...props }: TourSharedProps) => {
         sideOffset={currentStep?.setting.sideOffset}
         alignOffset={currentStep?.setting.alignOffset}
         avoidCollisions={currentStep?.setting.alignType === 'auto'}
-        side={side}
-        align={align}
+        side={
+          currentStep?.setting?.alignType === 'auto'
+            ? 'bottom'
+            : ((currentStep?.setting?.side as Side) ?? 'bottom')
+        }
+        align={
+          currentStep?.setting?.alignType === 'auto'
+            ? 'center'
+            : ((currentStep?.setting?.align as Align) ?? 'center')
+        }
         width={`${currentStep?.setting.width}px`}
         arrowSize={{
           width: themeSetting?.tooltip.notchSize ?? 20,
@@ -110,8 +95,10 @@ const TourPopper = ({ store, ...props }: TourSharedProps) => {
   );
 };
 
-const TourModal = ({ store, onClose, handleOnClick }: PopperContentProps) => {
-  const { openState, zIndex, globalStyle, currentStep, assets } = store;
+const TourModal = (props: TourSharedProps) => {
+  const { store, onClose, handleOnClick } = props;
+  const { openState, zIndex, globalStyle, currentStep } = store;
+  const { assets } = store;
 
   return (
     <SharedPopper.Popper open={openState} zIndex={zIndex} globalStyle={globalStyle} assets={assets}>
@@ -128,8 +115,9 @@ const TourModal = ({ store, onClose, handleOnClick }: PopperContentProps) => {
   );
 };
 
-export const Tour = ({ tour }: TourProps) => {
+export const Tour = ({ tour }: { tour: TourCore }) => {
   const store = useSyncExternalStore(tour.getStore().subscribe, tour.getStore().getSnapshot);
+
   const { userInfo, currentStep, triggerRef, openState } = store;
   const { handleClose, handleOnClick, handleActions } = tour;
 

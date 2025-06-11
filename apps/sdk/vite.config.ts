@@ -76,7 +76,6 @@ export default defineConfig(({ command }) => {
         // the proper extensions will be added
         fileName: 'usertour',
       },
-      sourcemap: true,
     },
   };
 
@@ -87,19 +86,12 @@ export default defineConfig(({ command }) => {
     },
     build: {
       ...defaultConfig.build,
-      sourcemap: true,
     },
     server: {
+      host: 'js.usertour.local',
       port: 5173,
       https: false,
       open: true,
-      hmr: {
-        overlay: true,
-      },
-    },
-    optimizeDeps: {
-      include: ['@dnd-kit/core', '@radix-ui/react-popover'],
-      force: true,
     },
   };
 
@@ -119,7 +111,6 @@ export default defineConfig(({ command }) => {
           },
           commonjsOptions: { include: [] },
           outDir: `dist/${version}/${folderName}`,
-          sourcemap: true,
         },
         plugins: [...buildPlugins],
       };
@@ -145,7 +136,6 @@ export default defineConfig(({ command }) => {
         },
         commonjsOptions: { include: [] },
         outDir: `dist/${version}/${folderName}`,
-        sourcemap: true,
       },
       plugins: [...buildPlugins],
     };
