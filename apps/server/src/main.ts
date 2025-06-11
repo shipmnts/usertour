@@ -5,11 +5,9 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { RedisIoAdapter } from './adapters/redis-io.adapter';
 import { AppModule } from './app.module';
 import { Logger } from 'nestjs-pino';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import cookieParser from 'cookie-parser';
-import { OpenAPIModule } from './openapi/openapi.module';
 
 // import { AllExceptionsFilter } from './common/filter';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -26,27 +24,10 @@ async function bootstrap() {
   // app.useGlobalFilters(new AllExceptionsFilter());
 
   // Validation
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  );
+  app.useGlobalPipes(new ValidationPipe());
 
   // trust proxy
   app.set('trust proxy', true);
-
-  // OpenAPI documentation configuration
-  const config = new DocumentBuilder()
-    .setTitle('UserTour API')
-    .setDescription('The UserTour API documentation')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config, {
-    include: [OpenAPIModule],
-  });
-  SwaggerModule.setup('api', app, document);
 
   const configService = app.get(ConfigService);
   // Uncomment these lines to use the Redis adapter:

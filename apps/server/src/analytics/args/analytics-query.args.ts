@@ -15,7 +15,4 @@ export class AnalyticsIdArgs {
 
   @Field()
   timezone: string;
-
-  @Field()
-  environmentId: string;
 }

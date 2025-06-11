@@ -234,7 +234,11 @@ const ChecklistContainer = forwardRef<HTMLDivElement, ChecklistContainerProps>(
       }
     });
 
-    return <div ref={composedRefs}>{children}</div>;
+    return (
+      <div id="usertour-widget" ref={composedRefs}>
+        {children}
+      </div>
+    );
   },
 );
 

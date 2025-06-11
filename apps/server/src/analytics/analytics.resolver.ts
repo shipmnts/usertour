@@ -22,25 +22,18 @@ export class AnalyticsResolver {
   @Roles([RolesScopeEnum.ADMIN, RolesScopeEnum.OWNER, RolesScopeEnum.VIEWER])
   async queryContentAnalytics(
     @Args()
-    { contentId, startDate = '', endDate = '', timezone, environmentId }: AnalyticsIdArgs,
+    { contentId, startDate = '', endDate = '', timezone }: AnalyticsIdArgs,
   ) {
-    return await this.service.queryContentAnalytics(
-      environmentId,
-      contentId,
-      startDate,
-      endDate,
-      timezone,
-    );
+    return await this.service.queryContentAnalytics(contentId, startDate, endDate, timezone);
   }
 
   @Query(() => GraphQLJSON)
   @Roles([RolesScopeEnum.ADMIN, RolesScopeEnum.OWNER, RolesScopeEnum.VIEWER])
   async queryContentQuestionAnalytics(
     @Args()
-    { environmentId, contentId, startDate = '', endDate = '', timezone }: AnalyticsIdArgs,
+    { contentId, startDate = '', endDate = '', timezone }: AnalyticsIdArgs,
   ) {
     return await this.service.queryContentQuestionAnalytics(
-      environmentId,
       contentId,
       startDate,
       endDate,

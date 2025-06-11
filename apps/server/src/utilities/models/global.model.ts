@@ -4,7 +4,4 @@ import { Field, ObjectType } from '@nestjs/graphql';
 export class GlobalConfig {
   @Field(() => Boolean)
   enabledBilling: boolean;
-
-  @Field(() => Boolean)
-  isSelfHostedMode: boolean;
 }

@@ -188,13 +188,6 @@ const RulesUserAttributeName = () => {
     },
     [attributes],
   );
-  const userAttributes =
-    attributes?.filter((attr) => attr.bizType === AttributeBizTypes.User) || [];
-  const companyAttributes =
-    attributes?.filter((attr) => attr.bizType === AttributeBizTypes.Company) || [];
-  const membershipAttributes =
-    attributes?.filter((attr) => attr.bizType === AttributeBizTypes.Membership) || [];
-
   return (
     <div className="flex flex-row">
       <Popover.Popover open={open} onOpenChange={setOpen}>
@@ -212,9 +205,10 @@ const RulesUserAttributeName = () => {
             <CommandInput placeholder="Search attribute..." />
             <CommandEmpty>No items found.</CommandEmpty>
             <ScrollArea className="h-72">
-              {userAttributes.length > 0 && (
-                <CommandGroup heading="User attribute" style={{ zIndex: EXTENSION_CONTENT_RULES }}>
-                  {userAttributes.map((item) => (
+              <CommandGroup heading="User attribute" style={{ zIndex: EXTENSION_CONTENT_RULES }}>
+                {attributes
+                  ?.filter((attr) => attr.bizType === AttributeBizTypes.User)
+                  .map((item) => (
                     <CommandItem
                       key={item.id}
                       className="cursor-pointer"
@@ -232,15 +226,12 @@ const RulesUserAttributeName = () => {
                       />
                     </CommandItem>
                   ))}
-                </CommandGroup>
-              )}
+              </CommandGroup>
 
-              {companyAttributes.length > 0 && (
-                <CommandGroup
-                  heading="Company attribute"
-                  style={{ zIndex: EXTENSION_CONTENT_RULES }}
-                >
-                  {companyAttributes.map((item) => (
+              <CommandGroup heading="Company attribute" style={{ zIndex: EXTENSION_CONTENT_RULES }}>
+                {attributes
+                  ?.filter((attr) => attr.bizType === AttributeBizTypes.Company)
+                  .map((item) => (
                     <CommandItem
                       key={item.id}
                       className="cursor-pointer text-sm"
@@ -258,15 +249,15 @@ const RulesUserAttributeName = () => {
                       />
                     </CommandItem>
                   ))}
-                </CommandGroup>
-              )}
+              </CommandGroup>
 
-              {membershipAttributes.length > 0 && (
-                <CommandGroup
-                  heading="Membership attribute"
-                  style={{ zIndex: EXTENSION_CONTENT_RULES }}
-                >
-                  {membershipAttributes.map((item) => (
+              <CommandGroup
+                heading="Membership attribute"
+                style={{ zIndex: EXTENSION_CONTENT_RULES }}
+              >
+                {attributes
+                  ?.filter((attr) => attr.bizType === AttributeBizTypes.Membership)
+                  .map((item) => (
                     <CommandItem
                       key={item.id}
                       className="cursor-pointer text-sm"
@@ -284,8 +275,7 @@ const RulesUserAttributeName = () => {
                       />
                     </CommandItem>
                   ))}
-                </CommandGroup>
-              )}
+              </CommandGroup>
             </ScrollArea>
           </Command>
         </Popover.PopoverContent>
@@ -509,6 +499,7 @@ export const RulesUserAttribute = (props: RulesUserAttributeProps) => {
   const [displayCondition, setDisplayCondition] = useState<string>('');
   const [displayValue, setDisplayValue] = useState<string>('');
 
+  const [isUpdate, setIsUpdate] = useState(!data?.attrId);
   const { disabled } = useRulesContext();
 
   useEffect(() => {
@@ -521,20 +512,31 @@ export const RulesUserAttribute = (props: RulesUserAttributeProps) => {
     }
   }, [attributes]);
 
-  const handleDataUpdate = useCallback(() => {
-    if (localData) {
-      updateConditionData(index, { ...localData });
-    }
-  }, [index, localData, updateConditionData]);
-
   const updateLocalData = useCallback(
     (updates: RulesUserAttributeData) => {
       const data = localData ? { ...localData, ...updates } : { ...updates };
       setLocalData(data);
-      handleDataUpdate();
+      setIsUpdate(true);
     },
     [localData],
   );
+
+  useEffect(() => {
+    if (!attributes) {
+      return;
+    }
+    const { showError, errorInfo } = getUserAttrError(localData, attributes);
+    if (!open && !showError) {
+      updateConditionData(index, { ...localData });
+    }
+    if (isUpdate && !open && showError) {
+      setErrorInfo(errorInfo);
+      setOpenError(true);
+    } else {
+      setErrorInfo('');
+      setOpenError(false);
+    }
+  }, [open, selectedPreset, localData, isUpdate]);
 
   useEffect(() => {
     if (selectedPreset?.dataType) {
@@ -576,22 +578,6 @@ export const RulesUserAttribute = (props: RulesUserAttributeProps) => {
     setDisplayValue(localData?.value || '');
   }, [localData, selectedPreset]);
 
-  const handleOpenChange = (open: boolean) => {
-    setOpen(open);
-    if (open) {
-      setErrorInfo('');
-      setOpenError(false);
-    } else {
-      const { showError, errorInfo } = getUserAttrError(localData, attributes || []);
-      if (showError) {
-        setErrorInfo(errorInfo);
-        setOpenError(true);
-      } else {
-        handleDataUpdate();
-      }
-    }
-  };
-
   const value = {
     selectedPreset,
     setSelectedPreset,
@@ -612,7 +598,7 @@ export const RulesUserAttribute = (props: RulesUserAttributeProps) => {
               <RulesConditionIcon>
                 <UserIcon width={16} height={16} />
               </RulesConditionIcon>
-              <RulesPopover onOpenChange={handleOpenChange} open={open}>
+              <RulesPopover onOpenChange={setOpen} open={open}>
                 <RulesPopoverTrigger className={cn(isHorizontal ? 'w-auto' : '')}>
                   <span className="font-bold">{selectedPreset?.displayName} </span>
                   {displayCondition} <span className="font-bold ">{displayValue}</span>

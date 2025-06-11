@@ -8,6 +8,5 @@ import { BizService } from './biz.service';
 @Module({
   imports: [EnvironmentsModule, ProjectsModule],
   providers: [BizResolver, BizService, BizGuard],
-  exports: [BizService],
 })
 export class BizModule {}

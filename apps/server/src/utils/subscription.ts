@@ -1,15 +1,13 @@
 // Define plan type and subscription interval types
-type PlanType = 'hobby' | 'starter' | 'growth' | 'business';
+type PlanType = 'hobby' | 'pro' | 'growth' | 'enterprise';
 type Interval = 'monthly' | 'yearly';
 
 // Define price lookup key mapping
 const PRICE_LOOKUP_MAPPING: Record<string, { planType: PlanType; interval: Interval }> = {
-  starter_monthly: { planType: 'starter', interval: 'monthly' },
-  starter_yearly: { planType: 'starter', interval: 'yearly' },
+  pro_monthly: { planType: 'pro', interval: 'monthly' },
+  pro_yearly: { planType: 'pro', interval: 'yearly' },
   growth_monthly: { planType: 'growth', interval: 'monthly' },
   growth_yearly: { planType: 'growth', interval: 'yearly' },
-  business_monthly: { planType: 'business', interval: 'monthly' },
-  business_yearly: { planType: 'business', interval: 'yearly' },
 };
 
 /**

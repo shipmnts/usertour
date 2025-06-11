@@ -2,9 +2,8 @@ import { Environment, Project } from '@/types/project';
 import { useMutation, useQuery } from '@apollo/client';
 import { UID_COOKIE } from '@usertour-ui/constants';
 import { getUserInfo, logout } from '@usertour-ui/gql';
-import { useGlobalConfigQuery } from '@usertour-ui/shared-hooks';
 import { removeAuthToken } from '@usertour-ui/shared-utils';
-import { GlobalConfig, TeamMemberRole, UserProfile } from '@usertour-ui/types';
+import { TeamMemberRole, UserProfile } from '@usertour-ui/types';
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { useCookie } from 'react-use';
 
@@ -18,7 +17,6 @@ interface AppContextProps {
   handleLogout: () => Promise<void>;
   projects: Project[];
   isViewOnly: boolean;
-  globalConfig: GlobalConfig | undefined;
 }
 
 export const AppContext = createContext<AppContextProps | null>(null);
@@ -35,7 +33,6 @@ export const AppProvider = (props: AppProviderProps) => {
   const { data, refetch, loading, error } = useQuery(getUserInfo, {
     skip: !uid,
   });
-  const { data: globalConfig } = useGlobalConfigQuery();
   const [logoutMutation] = useMutation(logout);
 
   useEffect(() => {
@@ -85,7 +82,6 @@ export const AppProvider = (props: AppProviderProps) => {
     handleLogout,
     projects,
     isViewOnly,
-    globalConfig,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

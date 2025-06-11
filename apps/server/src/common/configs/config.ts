@@ -40,8 +40,6 @@ const config: Config = {
   },
   app: {
     homepageUrl: process.env.APP_HOMEPAGE_URL,
-    apiUrl: process.env.API_URL,
-    docUrl: process.env.DOC_URL,
   },
   aws: {
     s3: {
@@ -102,7 +100,6 @@ const config: Config = {
   },
   globalConfig: {
     enabledBillingUsers: process.env.ENABLED_BILLING_USERS?.split(',') || [],
-    isSelfHostedMode: process.env.IS_SELF_HOSTED_MODE !== 'false',
   },
 };
 

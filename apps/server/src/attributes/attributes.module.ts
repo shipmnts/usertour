@@ -7,6 +7,5 @@ import { AttributesService } from './attributes.service';
 @Module({
   imports: [ProjectsModule],
   providers: [AttributesResolver, AttributesService, AttributesGuard],
-  exports: [AttributesService],
 })
 export class AttributesModule {}

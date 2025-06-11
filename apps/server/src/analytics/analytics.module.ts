@@ -1,4 +1,4 @@
-import { ContentModule } from '@/content/content.module';
+import { ContentsModule } from '@/contents/contents.module';
 import { EnvironmentsModule } from '@/environments/environments.module';
 import { ProjectsModule } from '@/projects/projects.module';
 import { Module } from '@nestjs/common';
@@ -6,8 +6,7 @@ import { AnalyticsResolver } from './analytics.resolver';
 import { AnalyticsService } from './analytics.service';
 
 @Module({
-  imports: [ContentModule, ProjectsModule, EnvironmentsModule],
+  imports: [ContentsModule, ProjectsModule, EnvironmentsModule],
   providers: [AnalyticsResolver, AnalyticsService],
-  exports: [AnalyticsService],
 })
 export class AnalyticsModule {}

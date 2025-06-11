@@ -16,8 +16,15 @@ const LauncherProgressColumn = ({
     return <></>;
   }
 
-  const isActivated = !!bizEvent.find((e) => e?.event?.codeName === BizEvents.LAUNCHER_ACTIVATED);
-  const isDismissed = !!bizEvent.find((e) => e?.event?.codeName === BizEvents.LAUNCHER_DISMISSED);
+  const activatedEvent = eventList?.find((e) => e.codeName === BizEvents.LAUNCHER_ACTIVATED);
+  const dismissedEvent = eventList.find((e) => e.codeName === BizEvents.LAUNCHER_DISMISSED);
+
+  if (!activatedEvent || !dismissedEvent) {
+    return <></>;
+  }
+
+  const isActivated = !!bizEvent.find((e) => e?.eventId === activatedEvent.id);
+  const isDismissed = !!bizEvent.find((e) => e?.eventId === dismissedEvent.id);
 
   return (
     <div className="flex flex-row items-center space-x-3">
@@ -62,12 +69,19 @@ const ChecklistProgressColumn = ({
     return <></>;
   }
 
-  const completeBizEvent = bizEvent.find(
-    (e) => e.event?.codeName === BizEvents.CHECKLIST_COMPLETED,
+  const completeEvent = eventList?.find((e) => e.codeName === BizEvents.CHECKLIST_COMPLETED);
+  const dismissedEvent = eventList.find((e) => e.codeName === BizEvents.CHECKLIST_DISMISSED);
+
+  const taskCompletedEvent = eventList.find(
+    (e) => e.codeName === BizEvents.CHECKLIST_TASK_COMPLETED,
   );
-  const dismissedBizEvent = bizEvent.find(
-    (e) => e.event?.codeName === BizEvents.CHECKLIST_DISMISSED,
-  );
+
+  if (!completeEvent || !dismissedEvent) {
+    return <></>;
+  }
+
+  const completeBizEvent = bizEvent.find((e) => e.eventId === completeEvent.id);
+  const dismissedBizEvent = bizEvent.find((e) => e.eventId === dismissedEvent.id);
 
   // Sort events by creation time
   const firstEvent = bizEvent.sort(
@@ -75,7 +89,7 @@ const ChecklistProgressColumn = ({
   )[0];
 
   const checklistItemIds = bizEvent
-    .filter((e) => e.event?.codeName === BizEvents.CHECKLIST_TASK_COMPLETED)
+    .filter((e) => e.eventId === taskCompletedEvent?.id)
     .map((e) => e.data?.checklist_task_id);
 
   const completedItemIds = data.items.filter((item) => checklistItemIds.includes(item.id));
@@ -131,9 +145,18 @@ const FlowProgressColumn = ({
     return <></>;
   }
 
-  const completeBizEvent = bizEvent.find((e) => e.event?.codeName === BizEvents.FLOW_COMPLETED);
+  const completeEvent = eventList?.find((e) => e.codeName === BizEvents.FLOW_COMPLETED);
+  const itemSeenEvent = eventList.find((e) => e.codeName === BizEvents.FLOW_STEP_SEEN);
+
+  const endedEvent = eventList.find((e) => e.codeName === BizEvents.FLOW_ENDED);
+
+  if (!completeEvent || !itemSeenEvent || !endedEvent) {
+    return <></>;
+  }
+
+  const completeBizEvent = bizEvent.find((e) => e.eventId === completeEvent.id);
   const lastSeenBizEvent = bizEvent
-    .filter((e) => e.event?.codeName === BizEvents.FLOW_STEP_SEEN)
+    .filter((e) => e.eventId === itemSeenEvent.id)
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
 
   // Sort events by creation time
@@ -141,7 +164,7 @@ const FlowProgressColumn = ({
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   )[0];
 
-  const endedBizEvent = bizEvent.find((e) => e.event?.codeName === BizEvents.FLOW_ENDED);
+  const endedBizEvent = bizEvent.find((e) => e.eventId === endedEvent.id);
 
   const completeDate =
     completeBizEvent && firstEvent

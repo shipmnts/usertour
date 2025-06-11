@@ -5,7 +5,7 @@ import { AttributesModule } from '@/attributes/attributes.module';
 import { AuthModule } from '@/auth/auth.module';
 import { BizModule } from '@/biz/biz.module';
 import config from '@/common/configs/config';
-import { ContentModule } from '@/content/content.module';
+import { ContentsModule } from '@/contents/contents.module';
 import { EnvironmentsModule } from '@/environments/environments.module';
 import { EventsModule } from '@/events/events.module';
 import { GqlConfigService } from '@/gql-config.service';
@@ -28,7 +28,7 @@ import { StripeModule } from '@golevelup/nestjs-stripe';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { LoggerModule } from 'nestjs-pino';
 import api from '@opentelemetry/api';
-import { OpenAPIModule } from './openapi/openapi.module';
+import { DbMonitorModule } from './common/db-monitor/db-monitor.module';
 
 @Module({
   imports: [
@@ -62,8 +62,13 @@ import { OpenAPIModule } from './openapi/openapi.module';
           env: process.env.NODE_ENV,
           uid: (req as any).user?.id || 'anonymous',
         }),
-        level: 'debug',
-        transport: process.env.NODE_ENV !== 'production' ? { target: 'pino-pretty' } : undefined,
+        transport: {
+          target: process.env.NODE_ENV !== 'production' ? 'pino-pretty' : 'pino/file',
+          options: {
+            destination: 1, // stdout
+            sync: false,
+          },
+        },
       },
     }),
     BullModule.forRootAsync({
@@ -99,7 +104,7 @@ import { OpenAPIModule } from './openapi/openapi.module';
     WebSocketModule,
     AuthModule,
     UsersModule,
-    ContentModule,
+    ContentsModule,
     EnvironmentsModule,
     ProjectsModule,
     UtilitiesModule,
@@ -111,7 +116,7 @@ import { OpenAPIModule } from './openapi/openapi.module';
     LocalizationsModule,
     TeamModule,
     SubscriptionModule,
-    OpenAPIModule,
+    DbMonitorModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],
