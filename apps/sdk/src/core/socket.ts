@@ -78,14 +78,13 @@ export class Socket extends Evented {
     });
   }
 
-
   /**
    * Emit an event and wait for acknowledgment
    * @param event - Event name to emit
    * @param data - Data to send with the event
    * @returns Promise with the response
    */
-  private async emitWithTimeout<T>(event: string, data: any): Promise<T> {
+  private async emitWithTimeout<T>(event: string, data: any): Promise<T | undefined> {
     try {
       return await this.socket.emitWithAck(event, data);
     } catch (error) {
