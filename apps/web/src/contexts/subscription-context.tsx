@@ -42,7 +42,7 @@ export function SubscriptionProvider(props: SubscriptionProviderProps): JSX.Elem
 
   const subscription = subscriptionData?.getSubscriptionByProjectId;
   const currentUsage = usageData?.getSubscriptionUsage ?? 0;
-  const planType: PlanType = subscription?.planType ?? PlanType.HOBBY;
+  const planType: PlanType = subscription?.planType ?? PlanType.BUSINESS;
 
   const planLimits: Record<PlanType, number> = {
     [PlanType.HOBBY]: HobbySessionLimit,

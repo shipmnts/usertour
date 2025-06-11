@@ -44,7 +44,7 @@ export class WebSocketService {
     });
     const config = {
       removeBranding: false,
-      planType: 'hobby',
+      planType: 'business',
     };
     if (!environment) {
       return config;
@@ -494,7 +494,10 @@ export class WebSocketService {
       where: { id: segmentId },
     });
     const bizCompany = await this.prisma.bizCompany.findFirst({
-      where: { externalId: String(externalCompanyId), environmentId: environment.id },
+      where: {
+        externalId: String(externalCompanyId),
+        environmentId: environment.id,
+      },
     });
 
     if (!segment || !bizCompany) {

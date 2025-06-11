@@ -73,7 +73,7 @@ export const MemberInviteDialog = ({ onClose, isOpen }: InviteDialogProps) => {
     subscription: Subscription | null;
   };
 
-  const planType: PlanType = subscription?.planType ?? PlanType.HOBBY;
+  const planType: PlanType = subscription?.planType ?? PlanType.BUSINESS;
 
   const canInviteMembers = useMemo(() => {
     if (globalConfig?.isSelfHostedMode) {

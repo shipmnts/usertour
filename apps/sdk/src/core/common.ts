@@ -15,7 +15,7 @@ const DEFAULT_STORE_VALUES = {
   userInfo: undefined,
   sdkConfig: {
     removeBranding: false,
-    planType: PlanType.HOBBY,
+    planType: PlanType.BUSINESS,
   },
 };
 
