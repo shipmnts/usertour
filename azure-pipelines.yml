@@ -12,9 +12,9 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: "f6b97107-dab6-4c23-ada0-e6765384c764"
-  imageRepository: "shipmnts/usertour"
-  containerRegistry: "shipmnts.azurecr.io"
+  dockerRegistryServiceConnection: "15129488-bc66-49d9-9f1d-b4d3f69c592f"
+  imageRepository: "hub/usertour"
+  containerRegistry: "0fr4llth.c1.gra9.container-registry.ovh.net"
   dockerfilePath: "**/Dockerfile"
   tag: "$(Build.BuildId)"
 

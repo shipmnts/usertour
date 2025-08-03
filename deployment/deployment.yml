@@ -14,17 +14,15 @@ spec:
     spec:
       imagePullSecrets:
         - name: acr-pull
-
       containers:
         - name: user-tour-app
-          image: shipmnts.azurecr.io/shipmnts/usertour
+          image: 0fr4llth.c1.gra9.container-registry.ovh.net/hub/usertour
           imagePullPolicy: Always
           ports:
             - containerPort: 80
           envFrom:
             - secretRef:
                 name: usertour-secret
-
           resources:
             limits:
               memory: "2Gi"
